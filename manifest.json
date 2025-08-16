@@ -1,0 +1,38 @@
+{
+  "manifest_version": 2,
+  "name": "MyMyApps",
+  "version": "1.1",
+  "description": "Easily access and manage your Microsoft MyApps links with this Firefox extension. Automatically fetch and display your app links!",
+  
+  "permissions": [
+    "storage",
+    "tabs"
+  ],
+  
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  
+  "content_scripts": [
+    {
+      "matches": ["https://myapps.microsoft.com/refreshapps"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  
+  "browser_action": {
+    "default_popup": "popup.html",
+    "default_title": "MyMyApps",
+    "default_icon": {
+      "128": "icon.png"
+    }
+  },
+  
+  "icons": {
+    "128": "icon.png"
+  },
+  
+  "web_accessible_resources": []
+}
