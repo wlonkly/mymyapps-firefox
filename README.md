@@ -1,5 +1,9 @@
 # MyMyApps - Firefox Extension
 
+**Firefox port of the original Chrome extension by baukburg@gmail.com**
+
+Original Chrome Extension: [MyMyApps](https://chromewebstore.google.com/detail/mymyapps/bcoigfjmifckcplmaloeekdfmbjmpohb)
+
 A Firefox extension for easily accessing and managing your Microsoft MyApps links. Automatically fetches and displays your app links with search and keyboard navigation functionality.
 
 ## Features
