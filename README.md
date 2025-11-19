@@ -6,42 +6,9 @@ Original Chrome Extension: [MyMyApps](https://chromewebstore.google.com/detail/m
 
 A Firefox extension for easily accessing and managing your Microsoft MyApps links. Automatically fetches and displays your app links with search and keyboard navigation functionality.
 
-## Features
-
-- **Automatic Link Extraction**: Extracts your Microsoft MyApps links when you visit myapps.microsoft.com
-- **Search Functionality**: Quickly find apps by typing to filter the list
-- **Keyboard Navigation**: Use arrow keys, Page Up/Down, and Enter to navigate
-- **Popup Interface**: Clean, responsive interface for accessing your apps
-- **Auto-refresh**: Automatically refreshes stale data (older than 24 hours)
-
-## How It Works
-
-1. **Data Extraction**: When you visit `https://myapps.microsoft.com/refreshapps`, the content script automatically extracts your app links from the page's localStorage
-2. **Local Storage**: App links are stored locally in the extension for quick access
-3. **Search & Navigate**: Use the popup to search and navigate through your apps
-4. **Direct Access**: Click or press Enter to open apps in new tabs
-
-## File Structure
-
-```
-├── manifest.json          # Extension manifest (Firefox format)
-├── background.js          # Background script for window management
-├── content.js            # Content script for data extraction
-├── popup.html            # Popup interface
-├── popup.css             # Popup styles
-├── popup.js              # Popup functionality
-├── icon.png              # Extension icon
-└── README.md             # This file
-```
-
 ## Installation
 
-### Loading in Firefox (Development)
-
-1. Open Firefox and navigate to `about:debugging`
-2. Click "This Firefox" in the sidebar
-3. Click "Load Temporary Add-on"
-4. Select the `manifest.json` file from this directory
+1. Go to the 
 
 ### First Use
 
@@ -62,9 +29,9 @@ A Firefox extension for easily accessing and managing your Microsoft MyApps link
 - **Enter**: Open the selected app in a new tab
 
 ### Refresh Data
-- Click "Refresh from MyApps" to get updated app links
-- Data automatically refreshes if older than 24 hours
-- Refresh is required if you have new apps added to your Microsoft account
+- Click "Refresh from MyApps" to manually get updated app links
+- Data automatically updates when you visit myapps.microsoft.com
+- Apps are cached indefinitely - no forced refresh on stale data
 
 ## Key Differences from Chrome Version
 
@@ -96,18 +63,36 @@ A Firefox extension for easily accessing and managing your Microsoft MyApps link
 
 ## Development
 
-### Testing
-1. Load the extension as a temporary add-on
-2. Visit `https://myapps.microsoft.com/refreshapps` to test content script
-3. Open the popup to test the interface and search functionality
+### Loading in Firefox (Development)
 
-### Debugging
-- Use Firefox Developer Tools for popup debugging
-- Check the Browser Console for background script logs
-- Content script logs appear in the web page's console
+1. Open Firefox and navigate to `about:debugging`
+2. Click "This Firefox" in the sidebar
+3. Click "Load Temporary Add-on"
+4. Select the `manifest.json` file from this directory
+
+### Packaging for Distribution
+
+To package the extension for submission to addons.mozilla.org:
+
+1. Increment version in manifest.json
+
+2. Merge your PR
+
+3. Create a ZIP file containing only the necessary files:
+   ```bash
+   zip -r mymyapps-firefox.zip manifest.json background.js content.js popup.html popup.css popup.js icon.png -x ".*" -x "__MACOSX"
+   ```
+4. Submit to AMO
+
+5. After AMO review, download signed zip file
+
+6. Create a Github release for this version number w/ signed zip file
 
 ## Version History
 
+- **v1.2**: Fixed forced refresh bug - apps now cache indefinitely
+  - Removed 24-hour auto-refresh that required frequent manual refreshes
+  - Apps persist until manually refreshed or updated via myapps.microsoft.com
 - **v1.1**: Ported from Chrome extension with Firefox compatibility
-- Full search and keyboard navigation
-- Automatic data extraction and refresh
+  - Full search and keyboard navigation
+  - Automatic data extraction and refresh
