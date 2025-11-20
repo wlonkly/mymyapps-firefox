@@ -33,6 +33,13 @@
   "icons": {
     "128": "icon.png"
   },
+
+  "gecko": {
+    "id": "@mymyapps-firefox",
+    "data_collection_permissions": {
+      "required": ["none"]
+    }
+  },
   
   "web_accessible_resources": []
 }
