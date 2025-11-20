@@ -67,15 +67,12 @@ async function initializeState() {
     // Load stored apps
     const result = await browser.storage.local.get(['storedLinks', 'timestamp']);
     state.apps = result.storedLinks || [];
-    
+
     elements.searchInput.focus();
-    
-    // Check if we need to refresh (no apps or data is old)
-    if (!state.apps.length || !result.timestamp || result.timestamp < Date.now() - 86400000) { // 24 hours
-      await refreshFromMyApps(true); // Auto-refresh
-    } else {
-      updateDisplay();
-    }
+
+    // Always display cached apps - never force auto-refresh
+    // Users can manually refresh or it will update when they visit myapps.microsoft.com
+    updateDisplay();
   } catch (error) {
     console.error('Error initializing popup:', error);
   }
@@ -242,10 +239,9 @@ async function refreshFromMyApps(isAutoRefresh) {
         state.isLoading = false;
         state.windowId = null;
         browser.storage.onChanged.removeListener(storageListener);
-        
+
         // Don't close the tab automatically, let user interact with it
-        browser.storage.local.set({ storedLinks: [], timestamp: Date.now() });
-        
+        // Keep cached apps - never clear them on timeout
         updateDisplay();
       }
     }, 10000);

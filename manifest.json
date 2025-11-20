@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "MyMyApps",
-  "version": "1.1",
+  "version": "1.2",
   "description": "Easily access and manage your Microsoft MyApps links with this Firefox extension. Automatically fetch and display your app links!",
   
   "permissions": [
