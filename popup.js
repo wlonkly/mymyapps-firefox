@@ -16,9 +16,9 @@ function searchApps(query, apps) {
   if (!query || query.length === 0) {
     return apps;
   }
-  
+
   query = query.toLowerCase();
-  return apps.filter(app => 
+  return apps.filter(app =>
     app.text.toLowerCase().includes(query)
   ).sort((a, b) => {
     // Prioritize matches at the beginning of the text
@@ -68,25 +68,33 @@ async function initializeState() {
     const result = await browser.storage.local.get(['storedLinks', 'timestamp']);
     state.apps = result.storedLinks || [];
 
-    elements.searchInput.focus();
-
     // Always display cached apps - never force auto-refresh
     // Users can manually refresh or it will update when they visit myapps.microsoft.com
     updateDisplay();
+
+    // Focus after rendering - retry until successful
+    ensureFocus();
   } catch (error) {
     console.error('Error initializing popup:', error);
   }
 }
 
+function ensureFocus() {
+  // Focus when window becomes active
+  window.addEventListener('focus', () => {
+    elements.searchInput.focus();
+  }, { once: true });
+}
+
 function setupEventListeners() {
   // Search input
   elements.searchInput.addEventListener('input', handleSearchInput);
-  
+
   // Refresh buttons
   elements.refreshButton.addEventListener('click', () => refreshFromMyApps(false));
   elements.refreshButtonBottom.addEventListener('click', () => refreshFromMyApps(false));
   elements.refreshLink.addEventListener('click', () => refreshFromMyApps(false));
-  
+
   // Keyboard navigation
   window.addEventListener('keydown', handleKeydown);
 }
@@ -114,7 +122,7 @@ function handleKeydown(event) {
 function updateDisplay() {
   // Filter apps based on search query
   state.filteredApps = searchApps(state.searchQuery, state.apps);
-  
+
   // Show/hide appropriate sections
   if (state.isLoading) {
     showLoading();
@@ -137,7 +145,7 @@ function showAppList() {
   elements.appList.style.display = 'block';
   elements.onboarding.style.display = 'none';
   elements.refreshWrapper.style.display = 'block';
-  
+
   renderAppList();
 }
 
@@ -150,7 +158,7 @@ function showOnboarding() {
 
 function renderAppList() {
   elements.appList.innerHTML = '';
-  
+
   state.filteredApps.forEach((app, index) => {
     const linkElement = createAppElement(app, index === state.selectedIndex);
     elements.appList.appendChild(linkElement);
@@ -163,27 +171,27 @@ function createAppElement(app, isSelected) {
   linkElement.href = app.href;
   linkElement.target = '_blank';
   linkElement.rel = 'noopener noreferrer';
-  
+
   linkElement.addEventListener('click', (event) => {
     event.preventDefault();
     openApp(app);
   });
-  
+
   const imageWrapper = document.createElement('div');
   imageWrapper.className = 'link-image-wrapper';
-  
+
   const image = document.createElement('div');
   image.className = 'link-image';
   image.style.backgroundImage = `url(${app.imgSrc})`;
-  
+
   const nameElement = document.createElement('div');
   nameElement.className = 'link-name';
   nameElement.textContent = app.text;
-  
+
   imageWrapper.appendChild(image);
   linkElement.appendChild(imageWrapper);
   linkElement.appendChild(nameElement);
-  
+
   return linkElement;
 }
 
@@ -206,7 +214,7 @@ async function refreshFromMyApps(isAutoRefresh) {
     state.isLoading = true;
     updateDisplay();
   }
-  
+
   try {
     // In Firefox, we'll open a regular tab instead of a popup window
     // and monitor for the data extraction
@@ -214,25 +222,26 @@ async function refreshFromMyApps(isAutoRefresh) {
       url: MYAPPS_URL,
       active: false // Open in background
     });
-    
+
     state.windowId = tab.id;
-    
+
     // Listen for storage changes (when content script extracts data)
     const storageListener = (changes, areaName) => {
       if (areaName === 'local' && changes.storedLinks) {
         state.isLoading = false;
         state.apps = changes.storedLinks.newValue || [];
+        console.log("MyMyApps: received updated app list from MyApps. Total apps:", state.apps.length, "Apps:", state.apps);
         updateDisplay();
-        
+
         // Clean up - close the tab
         browser.tabs.remove(state.windowId).catch(console.error);
         state.windowId = null;
         browser.storage.onChanged.removeListener(storageListener);
       }
     };
-    
+
     browser.storage.onChanged.addListener(storageListener);
-    
+
     // Fallback: if extraction doesn't work within 10 seconds
     setTimeout(() => {
       if (state.windowId) {
@@ -245,7 +254,7 @@ async function refreshFromMyApps(isAutoRefresh) {
         updateDisplay();
       }
     }, 10000);
-    
+
   } catch (error) {
     console.error('Error creating tab:', error);
     state.isLoading = false;

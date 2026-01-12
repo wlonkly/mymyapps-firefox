@@ -47,7 +47,7 @@ function attemptExtraction() {
     })
     .flat();
 
-  console.log("extraction complete", links);
+  console.log("MyMyApps: extraction complete. Found", links.length, "apps:", links);
   browser.storage.local.set({ storedLinks: links, timestamp: Date.now() });
 }
 
