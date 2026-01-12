@@ -19,6 +19,15 @@ A Firefox extension for easily accessing and managing your Microsoft MyApps link
 
 ## Usage
 
+### Opening the Extension
+- Click the MyMyApps extension icon in your toolbar, or
+- Use the keyboard shortcut **Alt+Shift+M** to open/close the popup
+
+You can customize this keyboard shortcut in Firefox:
+1. Navigate to `about:addons`
+2. Click the gear icon and select "Manage Extension Shortcuts"
+3. Find MyMyApps and set your preferred shortcut
+
 ### Search Apps
 - Type in the search box to filter apps by name
 - Search is case-insensitive and matches partial text
