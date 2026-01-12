@@ -29,6 +29,15 @@
       "128": "icon.png"
     }
   },
+
+  "commands": {
+    "_execute_browser_action": {
+      "suggested_key": {
+        "default": "Alt+Shift+M"
+      },
+      "description": "Open MyMyApps popup"
+    }
+  },
   
   "icons": {
     "128": "icon.png"
