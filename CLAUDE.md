@@ -14,6 +14,12 @@ MyMyApps is a Firefox extension (ported from Chrome) that extracts and manages M
 # Click "This Firefox" → "Load Temporary Add-on" → Select manifest.json
 ```
 
+### Packaging for Distribution
+```bash
+# Create ZIP file for submission to addons.mozilla.org
+zip -r mymyapps-firefox.zip manifest.json background.js content.js popup.html popup.css popup.js icon.png -x ".*" -x "__MACOSX"
+```
+
 ### Testing
 - Visit `https://myapps.microsoft.com/refreshapps` to test content script extraction
 - Open Browser Console (Ctrl+Shift+J) for background script logs
@@ -56,10 +62,11 @@ User clicks "Refresh" → popup.js opens background tab → content.js extracts 
 - Use `browser_action` (not `action`)
 
 ### Key Implementation Details
-- Storage listener pattern in popup.js:258-234 handles async data extraction
-- Background tabs created with `active: false` to avoid disrupting user
-- 10-second timeout fallback if extraction fails
-- `scrollIntoViewIfNeeded` fallback for Firefox compatibility (popup.js:195-199)
+- Storage listener pattern in popup.js:234-248 handles async data extraction
+- Background tabs created with `active: false` to avoid disrupting user (popup.js:229)
+- 10-second timeout fallback if extraction fails (popup.js:251, content.js:4)
+- `scrollIntoViewIfNeeded` fallback for Firefox compatibility (popup.js:206-210)
+- Search input focus (popup.js:82-92): Uses `requestAnimationFrame` for popup context and window `focus` event for tab context to handle timing inconsistencies
 
 ## File Purposes
 
